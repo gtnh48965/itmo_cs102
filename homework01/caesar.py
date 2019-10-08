@@ -13,7 +13,7 @@ def encrypt_caesar(plaintext: str) -> str:
     return ciphertext
 
 
-def decrypt_caesar(ciphertext: str) -> str:
+def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     """
     >>> decrypt_caesar("SBWKRQ")
     'PYTHON'
@@ -24,5 +24,4 @@ def decrypt_caesar(ciphertext: str) -> str:
     >>> decrypt_caesar("")
     ''
     """
-    # PUT YOUR CODE HERE
-    return plaintext
+    return ''.join([chr(((ord(l) - ord_islower_ind[l.islower()]) - shift) % 26 + ord_islower_ind[l.islower()]) if l.isalpha() else l for l in ciphertext])
