@@ -1,4 +1,10 @@
-def encrypt_caesar(plaintext: str) -> str:
+import string
+
+ord_islower_ind = {True: 97, False: 65}
+alphabet_length = 26
+
+
+def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     """
     >>> encrypt_caesar("PYTHON")
     'SBWKRQ'
@@ -9,7 +15,14 @@ def encrypt_caesar(plaintext: str) -> str:
     >>> encrypt_caesar("")
     ''
     """
-    # PUT YOUR CODE HERE
+    ciphertext = ''
+    for letter in plaintext:
+        if letter.isalpha():
+            ciphertext += chr(
+                (ord(letter) - ord_islower_ind[letter.islower()] + shift) % alphabet_length + ord_islower_ind[
+                    letter.islower()])
+        else:
+            ciphertext += letter
     return ciphertext
 
 
