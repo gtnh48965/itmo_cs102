@@ -24,4 +24,23 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     >>> decrypt_caesar("")
     ''
     """
-    return ''.join([chr(((ord(l) - ord_islower_ind[l.islower()]) - shift) % 26 + ord_islower_ind[l.islower()]) if l.isalpha() else l for l in ciphertext])
+    plaintext = ''
+    for letter in ciphertext:
+        if letter.isalpha():
+            plaintext += chr(
+                (ord(letter) - ord_islower_ind[letter.islower()] - shift) % alphabet_length + ord_islower_ind[
+                    letter.islower()])
+        else:
+            plaintext += letter
+    return plaintext
+
+
+if __name__ == '__main__':
+    original = string.ascii_letters
+    encrypted = encrypt_caesar(string.ascii_letters)
+    decrypted = decrypt_caesar(encrypt_caesar(string.ascii_letters))
+
+    print(original)
+    print(encrypted)
+    print(decrypted)
+    print(f'Decrypted is equal to orig: {original == decrypted}')
