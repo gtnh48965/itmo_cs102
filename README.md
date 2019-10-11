@@ -1,2 +1,4 @@
 # ITMO Programming course
-Assignments for "Introduction to Python" @ ITMO University
+Решения практических работ с сайта https://dementiy.github.io»
+
+Project developed by Prokhorov Nikolay. Contact me vk.com/prokhn
