@@ -2,6 +2,7 @@ package rsa
 
 import (
 	"errors"
+	"math"
 	"math/big"
 	"math/rand"
 )
@@ -17,15 +18,46 @@ type KeyPair struct {
 }
 
 func isPrime(n int) bool {
-	return big.NewInt(int64(n)).ProbablyPrime(0)
+	//return big.NewInt(int64(n)).ProbablyPrime(0)
+	for i := 2; i < int(math.Sqrt(float64(n)))+1; i++ {
+		if n%i == 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func gcd(a int, b int) int {
-	return int(new(big.Int).GCD(nil, nil, big.NewInt(int64(a)), big.NewInt(int64(b))).Int64())
+	//return int(new(big.Int).GCD(nil, nil, big.NewInt(int64(a)), big.NewInt(int64(b))).Int64())
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
+}
+
+func extendedEuclidGcd(a int, b int) (int, int, int) {
+	s := 0
+	oldS := 1
+	t := 1
+	oldT := 0
+	r := b
+	oldR := a
+	for r != 0 {
+		quotient := oldR / r
+		oldR, r = r, oldR-quotient*r
+		oldS, s = s, oldS-quotient*s
+		oldT, t = t, oldT-quotient*t
+	}
+	return oldR, oldS, oldT
 }
 
 func multiplicativeInverse(e int, phi int) int {
-	return int(new(big.Int).ModInverse(big.NewInt(int64(e)), big.NewInt(int64(phi))).Int64())
+	//return int(new(big.Int).ModInverse(big.NewInt(int64(e)), big.NewInt(int64(phi))).Int64())
+	_, x, _ := extendedEuclidGcd(e, phi)
+	if x < 0 {
+		x += phi
+	}
+	return x
 }
 
 func GenerateKeypair(p int, q int) (KeyPair, error) {
