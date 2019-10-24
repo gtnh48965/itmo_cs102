@@ -1,4 +1,7 @@
 # ITMO Programming course
 Решения практических работ с сайта https://dementiy.github.io»
 
-Project developed by Prokhorov Nikolay. Contact me vk.com/prokhn
+ФИКТ, Мобильные и сетевые технологии, группа К3140  
+Прохоров Николай
+
+Contact me vk.com/prokhn
