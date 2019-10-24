@@ -19,13 +19,13 @@ type KeyPair struct {
 
 func isPrime(n int) bool {
 	//return big.NewInt(int64(n)).ProbablyPrime(0)
-	if n == 2 {
+	if n == 2 || n == 3 {
 		return true
 	}
-	if n%2 == 0 {
+	if n < 2 || n%2 == 0 {
 		return false
 	}
-	for i := 3; i < int(math.Sqrt(float64(n)))+1; i += 2 {
+	for i := 5; i < int(math.Sqrt(float64(n)))+1; i += 2 {
 		if n%i == 0 {
 			return false
 		}
