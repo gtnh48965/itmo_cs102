@@ -67,9 +67,10 @@ class GameOfLife:
         """
         Выполнить один шаг игры.
         """
-        self.prev_generation = self.curr_generation.copy()
-        self.curr_generation = self.get_next_generation()
-        self.n_generation += 1
+        if not self.is_max_generations_exceed:
+            self.prev_generation = self.curr_generation.copy()
+            self.curr_generation = self.get_next_generation()
+            self.n_generation += 1
 
     @property
     def is_max_generations_exceed(self) -> bool:
