@@ -1,5 +1,6 @@
 import curses
 import time
+import argparse
 
 from life import GameOfLife
 from ui import UI
@@ -44,6 +45,11 @@ class Console(UI):
 
 
 if __name__ == '__main__':
-    game = GameOfLife((21, 80), max_generations=100)
+    parser = argparse.ArgumentParser(description='Console Game of life')
+    parser.add_argument('--rows', type=int, default=80, help='Number of rows')
+    parser.add_argument('--cols', type=int, default=30, help='Number of columns')
+    parser.add_argument('--max-generations', default=100, type=int, help='Maximum generation count')
+    args = parser.parse_args()
+    game = GameOfLife((args.cols, args.rows), max_generations=args.max_generations)
     console = Console(game)
     console.run()
