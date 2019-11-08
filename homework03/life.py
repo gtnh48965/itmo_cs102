@@ -1,6 +1,7 @@
 import pathlib
 import random
 
+from copy import deepcopy
 from typing import List, Optional, Tuple
 
 Cell = Tuple[int, int]
@@ -68,7 +69,7 @@ class GameOfLife:
         Выполнить один шаг игры.
         """
         if not self.is_max_generations_exceed:
-            self.prev_generation = self.curr_generation.copy()
+            self.prev_generation = deepcopy(self.curr_generation)
             self.curr_generation = self.get_next_generation()
             self.n_generation += 1
 
@@ -97,6 +98,7 @@ class GameOfLife:
 
         game = GameOfLife((rows, cols))
         game.curr_generation = grid
+        return game
 
     def save(self, filename: pathlib.Path) -> None:
         """
