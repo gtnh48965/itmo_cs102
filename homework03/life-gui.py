@@ -84,5 +84,5 @@ if __name__ == '__main__':
     parser.add_argument('--max-generations', default=float('inf'), type=int, help='Maximum generation count')
     args = parser.parse_args()
     game = GameOfLife((args.height // args.cell_size, args.width // args.cell_size), max_generations=args.max_generations)
-    gui = GUI(game)
+    gui = GUI(game, args.cell_size)
     gui.run()
