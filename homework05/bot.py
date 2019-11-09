@@ -17,6 +17,7 @@ WEEKDAYS_RUSSIAN = {'monday':    'понедельник',
                     'friday':    'пятницу',
                     'saturday':  'субботу',
                     'sunday':    'воскресенье'}
+WEEK_PARITY = {0: 'четная неделя', 1: 'нечетная неделя', 3: ''}
 EMOJI_NUMBERS = [u'\u0031\u20E3', u'\u0032\u20E3', u'\u0033\u20E3', u'\u0034\u20E3', u'\u0035\u20E3',
                  u'\u0036\u20E3', u'\u0037\u20E3', u'\u0038\u20E3', u'\u0039\u20E3']
 CACHED_SCHEDULE = {}
@@ -41,10 +42,13 @@ def parse_command(message):
 
 
 def get_schedule_page(group, week: str = None):
-    if week is None:
-        week = get_week_number()
+    print([week])
+    if week is None or week == '0':
+        week = ''
+    else:
+        week = week + '/'
 
-    url = f'{config["domain"]}/{group}/{week}/raspisanie_zanyatiy_{group}.htm'
+    url = f'{config["domain"]}/{group}/{week}raspisanie_zanyatiy_{group}.htm'
     response = requests.get(url)
     web_page = response.text
     return web_page
@@ -79,44 +83,61 @@ def parse_schedule_for_day(web_page, day_number: str):
 def get_schedule_info(group: str, day: str, week: str = None):
     global CACHED_SCHEDULE
     if week is None:
-        week = get_week_number()
+        week_key = 0
+    elif week == '0':
+        week_key = 0
+    elif week == '1':
+        week_key = 1
+    elif week == '2':
+        week_key = 2
+    elif int(week) % 2 == 0:
+        week_key = 1
+    else:
+        week_key = 2
 
     if CACHED_SCHEDULE.get(group) is None:
         CACHED_SCHEDULE[group] = {}
 
-    if CACHED_SCHEDULE[group].get(week) is None:
-        CACHED_SCHEDULE[group][week] = {}
+    if CACHED_SCHEDULE[group].get(week_key) is None:
+        CACHED_SCHEDULE[group][week_key] = {}
 
-    if CACHED_SCHEDULE[group][week].get(day) is None:
+    if CACHED_SCHEDULE[group][week_key].get(day) is None:
         print('Loading web-page with schedule...')
         web_page = get_schedule_page(group, week)
         schedule = parse_schedule_for_day(web_page, day)
 
         if schedule is None:
-            CACHED_SCHEDULE[group][week][day] = [[], [], []]
+            CACHED_SCHEDULE[group][week_key][day] = [[], [], []]
             return None
         else:
-            CACHED_SCHEDULE[group][week][day] = schedule
+            CACHED_SCHEDULE[group][week_key][day] = schedule
             return schedule
     else:
         print('Loading schedule from cache...')
-        schedule = CACHED_SCHEDULE[group][week][day]
+        schedule = CACHED_SCHEDULE[group][week_key][day]
         if len(schedule[0]) == 0:
             return None
         return schedule
 
 
 @bot.message_handler(commands=WEEKDAYS)
-def get_schedule(message, week_number: str = None, return_reply=False):
+def get_schedule(message, week_number: str = None, return_reply=False, consider_week_parity=True):
     """ Получить расписание на указанный день """
-    _cmd = parse_command(message)
-    if _cmd is None:
-        return
-    else:
-        day, group = _cmd
+    try:
+        day, week_number, group = message.text.split()
+        day = day[1:]
+    except ValueError:
+        _cmd = parse_command(message)
+        if _cmd is None:
+            return
+        else:
+            day, group = _cmd
 
     weekday_number = str(WEEKDAYS.index(day) + 1)
-    schedule = get_schedule_info(group, weekday_number, week_number)
+    if consider_week_parity:
+        schedule = get_schedule_info(group, weekday_number, week_number)
+    else:
+        schedule = get_schedule_info(group, weekday_number)
 
     if schedule is None:
         resp = 'На указанный день пар нет. Можно отдыхать :)'
@@ -193,7 +214,7 @@ def get_tommorow(message):
 
     day = get_day_number() + 1
     week = get_week_number()
-    if day == 8:
+    if day == 7:
         day = 1
         week += 1
 
@@ -214,7 +235,7 @@ def get_all_schedule(message):
     for day in range(1, 8):
         resp = ''
         message.text = f'/{WEEKDAYS[day - 1]} {group}'
-        schedule_for_day = get_schedule(message, return_reply=True)
+        schedule_for_day = get_schedule(message, return_reply=True, consider_week_parity=False)
         if 'пар нет' in schedule_for_day:
             resp += f'Расписание на {WEEKDAYS_RUSSIAN[WEEKDAYS[day - 1]]}:\n' \
                     f'Нет пар'
