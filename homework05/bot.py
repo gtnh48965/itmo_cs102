@@ -42,7 +42,6 @@ def parse_command(message):
 
 
 def get_schedule_page(group, week: str = None):
-    print([week])
     if week is None or week == '0':
         week = ''
     else:
@@ -102,7 +101,7 @@ def get_schedule_info(group: str, day: str, week: str = None):
         CACHED_SCHEDULE[group][week_key] = {}
 
     if CACHED_SCHEDULE[group][week_key].get(day) is None:
-        print('Loading web-page with schedule...')
+        # print('Loading web-page with schedule...')
         web_page = get_schedule_page(group, week)
         schedule = parse_schedule_for_day(web_page, day)
 
@@ -113,7 +112,7 @@ def get_schedule_info(group: str, day: str, week: str = None):
             CACHED_SCHEDULE[group][week_key][day] = schedule
             return schedule
     else:
-        print('Loading schedule from cache...')
+        # print('Loading schedule from cache...')
         schedule = CACHED_SCHEDULE[group][week_key][day]
         if len(schedule[0]) == 0:
             return None
